@@ -1,11 +1,17 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { BIO_LENGTH, USERNAME_LENGTH } from '../../constants';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 50, unique: true })
+  @Column({ length: USERNAME_LENGTH, unique: true })
   username: string;
 
   @Column({ unique: true })
@@ -14,7 +20,7 @@ export class User {
   @Column({ select: false })
   password: string;
 
-  @Column({ length: 500, nullable: true })
+  @Column({ length: BIO_LENGTH, nullable: true })
   bio: string;
 
   @Column({ nullable: true })

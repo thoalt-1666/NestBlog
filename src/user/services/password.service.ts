@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { SALT_ROUNDS } from 'src/constants';
+import { SALT_ROUNDS } from '../../constants';
 
 @Injectable()
 export class PasswordService {
