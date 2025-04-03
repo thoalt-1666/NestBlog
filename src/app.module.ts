@@ -5,12 +5,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { databaseConfig } from './config/database.config';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(databaseConfig),
     UserModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
