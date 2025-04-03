@@ -4,34 +4,48 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../user/entities/user.entity';
 import { LoginDto } from './dto/login.dto';
+import { PasswordService } from '../user/services/password.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private jwtService: JwtService,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private jwtService: JwtService,
+    private passwordService: PasswordService,
   ) {}
 
-  generateToken(user: User): string {
-    const payload = { 
-      sub: user.id, 
-      username: user.username,
-      email: user.email 
-    };
-    return this.jwtService.sign(payload);
-  }
-
-  async login(loginDto: LoginDto): Promise<User> {
+  async login(loginDto: LoginDto) {
     const user = await this.userRepository.findOne({
-      where: { email: loginDto.email }
+      where: { email: loginDto.email },
+      select: ['id', 'email', 'password', 'username'],
     });
 
-    if (!user || user.password !== loginDto.password) {
+    if (!user) {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    user.token = this.generateToken(user);
-    return user;
+    const isPasswordValid = await this.passwordService.comparePasswords(
+      loginDto.password,
+      user.password,
+    );
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    const token = this.generateToken(user);
+    user.token = token;
+    await this.userRepository.save(user);
+
+    return { user };
   }
-} 
+
+  generateToken(user: User): string {
+    return this.jwtService.sign({
+      id: user.id,
+      email: user.email,
+      username: user.username,
+    });
+  }
+}
