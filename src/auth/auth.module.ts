@@ -5,6 +5,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { User } from '../user/entities/user.entity';
 import { JWT } from '../constants';
+import { PasswordService } from '../user/services/password.service';
 
 @Module({
   controllers: [AuthController],
@@ -15,7 +16,7 @@ import { JWT } from '../constants';
     }),
     TypeOrmModule.forFeature([User]),
   ],
-  providers: [AuthService],
+  providers: [AuthService, PasswordService],
   exports: [AuthService],
 })
 export class AuthModule {}
