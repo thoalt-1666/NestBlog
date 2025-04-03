@@ -27,17 +27,12 @@ export class CommentsService {
         image: user.image,
         following: false,
       });
-    // const userResponse = new AuthorDto;
-    // userResponse.username = user.username;
-    // userResponse.bio = user.bio;
-    // userResponse.image = user.image;
-    // userResponse.following = false;
 
     const newComment = await this.commentRepository.create({
       body: createCommentDto.comment.body,
       author: userResponse,
     });
-    await this.commentRepository.save(newComment);
+    // await this.commentRepository.save(newComment);
 
     return {comment: newComment};
   }
