@@ -10,6 +10,10 @@ import { Request } from 'express';
 export interface JwtPayload {
   id: number;
   email: string;
+  username: string;
+  bio?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface RequestWithUser extends Request {
