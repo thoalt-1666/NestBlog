@@ -1,37 +1,47 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from '../user/entities/user.entity';
+import { UserService } from '../user/user.service';
 import { LoginDto } from './dto/login.dto';
+import { PasswordService } from '../user/services/password.service';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private userService: UserService,
     private jwtService: JwtService,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private passwordService: PasswordService,
   ) {}
 
-  generateToken(user: User): string {
-    const payload = { 
-      sub: user.id, 
-      username: user.username,
-      email: user.email 
-    };
-    return this.jwtService.sign(payload);
-  }
-
-  async login(loginDto: LoginDto): Promise<User> {
-    const user = await this.userRepository.findOne({
-      where: { email: loginDto.email }
-    });
-
-    if (!user || user.password !== loginDto.password) {
-      throw new UnauthorizedException('Invalid email or password');
+  async login(loginDto: LoginDto) {
+    const user = await this.userService.findByEmail(loginDto.email);
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    user.token = this.generateToken(user);
-    return user;
+    const isPasswordValid = await this.passwordService.comparePasswords(
+      loginDto.password,
+      user.password,
+    );
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const payload = {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      bio: user.bio,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+
+    const token = this.jwtService.sign(payload);
+    await this.userService.updateToken(user.id, token);
+
+    return {
+      access_token: token,
+      user: payload,
+    };
   }
-} 
+}

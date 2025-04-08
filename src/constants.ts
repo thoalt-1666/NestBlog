@@ -16,6 +16,10 @@ export const SERVER = {
   DEFAULT_ENV: 'development',
 };
 
+export const API = {
+  VERSION: '1',
+};
+
 export const USERNAME_LENGTH = 50;
 export const BIO_LENGTH = 500;
 export const SALT_ROUNDS = 10;

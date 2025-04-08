@@ -9,4 +9,4 @@ export class UserDto {
 
 export class CreateUserDto {
   user: UserDto;
-} 
+}
