@@ -14,6 +14,10 @@ export class CommentContextDto {
     updatedAt: string;
     body: string;
     author: AuthorDto;
+    
+    constructor(partial: Partial<CommentContextDto>) {
+        Object.assign(this, partial);
+      }
 }
 export class CommentResponseDto {
     comment: CommentContextDto;

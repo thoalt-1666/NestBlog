@@ -15,7 +15,7 @@ export class CommentsService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async createComment(slug: string, createCommentDto: CreateCommentDto, userId: number) : Promise<CommentResponseDto> {
+  async createComment(slugString: string, createCommentDto: CreateCommentDto, userId: number) : Promise<CommentResponseDto> {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new Error('User not found');
@@ -29,20 +29,20 @@ export class CommentsService {
       });
     
       const newComment = await this.commentRepository.create({
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        slug: slugString,
         body: createCommentDto.comment.body,
         authorId: user.id,
       });
       
     await this.commentRepository.save(newComment);
     
-    const commentContext = new CommentContextDto();
-    commentContext.id = newComment.id;
-    commentContext.createdAt = newComment.createdAt.toISOString();
-    commentContext.updatedAt = newComment.updatedAt.toISOString();
-    commentContext.body = newComment.body;
-    commentContext.author = userResponse;
+    const commentContext = new CommentContextDto({
+      id: newComment.id,
+      createdAt: newComment.createdAt.toISOString(),  
+      updatedAt: newComment.updatedAt.toISOString(),
+      body: newComment.body,
+      author: userResponse,
+    });
 
     return {comment: commentContext};
   }

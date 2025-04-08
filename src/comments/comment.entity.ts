@@ -14,12 +14,11 @@ export class Comment {
   updatedAt: Date;
 
   @Column()
+  slug: string;
+
+  @Column()
   body: string;
-  
-  // @ManyToOne(() => User)
-  // @JoinColumn({ name: 'authorId' })
-  // author: User;
-  
+
   @Column()
   authorId: number;
 }
