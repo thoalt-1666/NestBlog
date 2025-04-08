@@ -27,13 +27,23 @@ export class CommentsService {
         image: user.image,
         following: false,
       });
+    
+      const newComment = await this.commentRepository.create({
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        body: createCommentDto.comment.body,
+        authorId: user.id,
+      });
+      
+    await this.commentRepository.save(newComment);
+    
+    const commentContext = new CommentContextDto();
+    commentContext.id = newComment.id;
+    commentContext.createdAt = newComment.createdAt.toISOString();
+    commentContext.updatedAt = newComment.updatedAt.toISOString();
+    commentContext.body = newComment.body;
+    commentContext.author = userResponse;
 
-    const newComment = await this.commentRepository.create({
-      body: createCommentDto.comment.body,
-      author: userResponse,
-    });
-    // await this.commentRepository.save(newComment);
-
-    return {comment: newComment};
+    return {comment: commentContext};
   }
 }

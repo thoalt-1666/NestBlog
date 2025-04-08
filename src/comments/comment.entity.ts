@@ -16,9 +16,12 @@ export class Comment {
   @Column()
   body: string;
   
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'authorId' })
-  author: User;
+  // @ManyToOne(() => User)
+  // @JoinColumn({ name: 'authorId' })
+  // author: User;
+  
+  @Column()
+  authorId: number;
 }
 
 

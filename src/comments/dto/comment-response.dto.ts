@@ -16,6 +16,6 @@ export class CommentContextDto {
     author: AuthorDto;
 }
 export class CommentResponseDto {
-    comment: Comment;
+    comment: CommentContextDto;
 }
   
