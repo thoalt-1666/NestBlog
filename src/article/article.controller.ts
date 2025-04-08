@@ -1,30 +1,33 @@
-import { Controller, Get, Param, Post, Put, Body } from '@nestjs/common';
+import { Controller, Get, Put, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { Article } from './entities/article.entity';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
+import { JwtAuthGuard, RequestWithUser } from 'src/auth/guards/jwt-auth.guard';
+import { ArticleResponeDto } from './dto/article-respone.dto';
 
 @Controller('article')
 export class ArticleController {
     constructor(private readonly articleService: ArticleService) {}
 
-    @Get('findAll')
-    async findAll(): Promise<Article[]> {
-        return this.articleService.findAll();
-    }
-
-    @Get('findOne/:id')
-    async findOne(@Param('id') id: string): Promise<Article> {
-        return this.articleService.findOne(parseInt(id));
-    }
-
     @Post('create')
-    async create(@Body() createArticleDto: CreateArticleDto): Promise<Article> {
-        return this.articleService.create(createArticleDto);
+    @UseGuards(JwtAuthGuard)
+    async create(
+        @Body() createArticleDto: CreateArticleDto, 
+        @Request() req: RequestWithUser
+    ): Promise<ArticleResponeDto> {
+        const userId = req.user.id;
+        return this.articleService.create(createArticleDto, userId);
     }
 
     @Put('update/:id')
-    async update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto): Promise<Article> {
-        return this.articleService.update(parseInt(id), updateArticleDto);
+    @UseGuards(JwtAuthGuard)
+    async update(
+        @Param('id') id: string, 
+        @Body() updateArticleDto: UpdateArticleDto,
+        @Request() req: RequestWithUser
+    ): Promise<ArticleResponeDto> {
+        const userId = req.user.id;
+        return this.articleService.update(parseInt(id), updateArticleDto, userId);
     }
 }

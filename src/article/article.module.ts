@@ -4,10 +4,18 @@ import { ArticleController } from './article.controller';
 import { ArticleService } from './article.service';
 import { AuthModule } from '../auth/auth.module';
 import { Article } from './entities/article.entity';
+import { JwtModule } from '@nestjs/jwt';
+import { JWT } from '../constants';
+import { User } from 'src/user/entities/user.entity';
+import { PasswordModule } from 'src/user/services/password.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Article]),
+    TypeOrmModule.forFeature([Article, User]),
+    JwtModule.register({
+      secret: JWT.SECRET,
+      signOptions: { expiresIn: JWT.EXPIRES_IN },
+    }),
     AuthModule
   ],
   controllers: [ArticleController],

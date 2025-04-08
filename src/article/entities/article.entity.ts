@@ -18,6 +18,9 @@ import {
   
     @Column({ nullable: false })
     body: string;
+
+    @Column({ nullable: true})
+    authorId: number;
   
     // Define 'tagList' as an array of text in PostgreSQL
     @Column("text", { array: true, nullable: true })
