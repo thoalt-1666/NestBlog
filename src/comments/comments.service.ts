@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Comment } from './comment.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { CommentResponseDto, CommentContextDto, AuthorDto } from './dto/comment-response.dto';
+import {
+  CommentResponseDto,
+  CommentContextDto,
+  AuthorDto,
+} from './dto/comment-response.dto';
 import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
@@ -13,12 +17,15 @@ export class CommentsService {
     private readonly commentRepository: Repository<Comment>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) { }
+  ) {}
 
-  async createComment(commentSlug: string, createCommentDto: CreateCommentDto, userId: number): Promise<CommentResponseDto> {
+  async createComment(
+    commentSlug: string,
+    createCommentDto: CreateCommentDto,
+    userId: number,
+  ): Promise<CommentResponseDto> {
     try {
       const user = await this.userRepository.findOneBy({ id: userId });
-      if (!user) { throw new NotFoundException('User not found'); }
 
       const userResponse = new AuthorDto({
         username: user.username,
@@ -48,9 +55,12 @@ export class CommentsService {
       });
 
       return commentResponse;
-    }
-    catch (err) {
-      throw new NotFoundException('Error creating comment: ' + err.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        throw new NotFoundException('Error creating comment: ' + err.message);
+      } else {
+        throw new NotFoundException('An unknown error occurred');
+      }
     }
   }
 }

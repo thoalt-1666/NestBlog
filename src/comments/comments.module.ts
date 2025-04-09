@@ -8,7 +8,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { JWT } from '../constants';
 import { User } from 'src/user/entities/user.entity';
 
-@Module({imports: [
+@Module({
+  imports: [
     TypeOrmModule.forFeature([Comment, User]),
     JwtModule.register({
       secret: JWT.SECRET,
