@@ -4,7 +4,11 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
+import { User } from 'src/user/entities/user.entity';
 
 @Entity()
 export class Comment {
@@ -25,4 +29,9 @@ export class Comment {
 
   @Column()
   authorId: number;
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'authorId' })
+  @Exclude()
+  author: User;
 }
