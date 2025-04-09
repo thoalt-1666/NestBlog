@@ -2,6 +2,7 @@ import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { LoginResponseDto } from './dto/login-response.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -17,18 +18,7 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Login successful',
-    schema: {
-      example: {
-        access_token: 'jwt.token.here',
-        user: {
-          id: 1,
-          email: 'user@example.com',
-          username: 'johndoe',
-          bio: 'I am a software developer',
-          image: 'https://example.com/image.jpg',
-        },
-      },
-    },
+    type: LoginResponseDto
   })
   @ApiResponse({
     status: 401,
@@ -41,7 +31,7 @@ export class AuthController {
       },
     },
   })
-  async login(@Body() loginDto: LoginDto) {
+  async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
     return this.authService.login(loginDto);
   }
 }

@@ -21,6 +21,8 @@ import {
   ApiParam,
   ApiBody,
 } from '@nestjs/swagger';
+import { UserListResponseDto } from './dto/user-list-response.dto';
+import { LoginResponseDto } from '../auth/dto/login-response.dto';
 
 @ApiTags('Users')
 @Controller('user')
@@ -35,20 +37,11 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'List of users retrieved successfully',
-    schema: {
-      example: [
-        {
-          id: 1,
-          username: 'johndoe',
-          email: 'john@example.com',
-          bio: 'Software developer',
-          image: 'https://example.com/image.jpg',
-        },
-      ],
-    },
+    type: UserListResponseDto,
   })
-  async findAll(): Promise<User[]> {
-    return this.userService.findAll();
+  async findAll(): Promise<UserListResponseDto> {
+    const users = await this.userService.findAll();
+    return { users };
   }
 
   @Get('findOne/:id')
@@ -64,15 +57,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'User retrieved successfully',
-    schema: {
-      example: {
-        id: 1,
-        username: 'johndoe',
-        email: 'john@example.com',
-        bio: 'Software developer',
-        image: 'https://example.com/image.jpg',
-      },
-    },
+    type: LoginResponseDto,
   })
   @ApiResponse({
     status: 404,
@@ -85,8 +70,19 @@ export class UserController {
       },
     },
   })
-  async findOne(@Param('id') id: string): Promise<User> {
-    return this.userService.findOne(parseInt(id));
+  async findOne(@Param('id') id: string): Promise<LoginResponseDto> {
+    const user = await this.userService.findOne(parseInt(id));
+    return {
+      access_token: user.token,
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        bio: user.bio,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+    };
   }
 
   @Post('create')
@@ -98,18 +94,7 @@ export class UserController {
   @ApiResponse({
     status: 201,
     description: 'User created successfully',
-    schema: {
-      example: {
-        user: {
-          id: 1,
-          username: 'johndoe',
-          email: 'john@example.com',
-          bio: 'Software developer',
-          image: 'https://example.com/image.jpg',
-          token: 'jwt.token.here',
-        },
-      },
-    },
+    type: LoginResponseDto,
   })
   @ApiResponse({
     status: 400,
@@ -125,8 +110,19 @@ export class UserController {
       },
     },
   })
-  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto): Promise<LoginResponseDto> {
+    const user = await this.userService.create(createUserDto);
+    return {
+      access_token: user.token,
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        bio: user.bio,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+    };
   }
 
   @Put('update/:id')
@@ -143,17 +139,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'User updated successfully',
-    schema: {
-      example: {
-        user: {
-          id: 1,
-          username: 'johndoe',
-          email: 'john@example.com',
-          bio: 'Updated bio',
-          image: 'https://example.com/new-image.jpg',
-        },
-      },
-    },
+    type: LoginResponseDto,
   })
   @ApiResponse({
     status: 404,
@@ -169,8 +155,19 @@ export class UserController {
   async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<User> {
-    return this.userService.update(parseInt(id), updateUserDto);
+  ): Promise<LoginResponseDto> {
+    const user = await this.userService.update(parseInt(id), updateUserDto);
+    return {
+      access_token: user.token,
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        bio: user.bio,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+    };
   }
 
   @Get('api/user')
@@ -183,17 +180,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'Current user profile retrieved successfully',
-    schema: {
-      example: {
-        user: {
-          id: 1,
-          username: 'johndoe',
-          email: 'john@example.com',
-          bio: 'Software developer',
-          image: 'https://example.com/image.jpg',
-        },
-      },
-    },
+    type: LoginResponseDto,
   })
   @ApiResponse({
     status: 401,
@@ -206,7 +193,7 @@ export class UserController {
       },
     },
   })
-  getCurrentUser(@Request() req: RequestWithUser) {
-    return this.userService.findOne(req.user.id);
+  getCurrentUser(@Request() req: RequestWithUser): Promise<LoginResponseDto> {
+    return this.findOne(req.user.id.toString());
   }
 }
