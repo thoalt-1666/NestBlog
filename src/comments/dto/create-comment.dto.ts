@@ -1,10 +1,14 @@
 import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateCommentDto {
-  @ApiProperty({ description: 'Comment with body' })
+export class CommentBodyDto {
+  @ApiProperty()
   @IsNotEmpty()
-  comment: {
-    body: string;
-  };
+  body: string;
+}
+
+export class CreateCommentDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  comment: CommentBodyDto;
 }
