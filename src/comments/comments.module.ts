@@ -6,7 +6,6 @@ import { CommentsService } from './comments.service';
 import { CommentsController } from './comments.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { JWT } from '../constants';
-import { PasswordModule } from 'src/user/services/password.module';
 import { User } from 'src/user/entities/user.entity';
 
 @Module({imports: [
@@ -15,7 +14,6 @@ import { User } from 'src/user/entities/user.entity';
       secret: JWT.SECRET,
       signOptions: { expiresIn: JWT.EXPIRES_IN },
     }),
-    PasswordModule,
   ],
   providers: [CommentsService],
   exports: [CommentsService],
