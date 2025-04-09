@@ -1,4 +1,3 @@
-// src/comments/comments.controller.ts
 import {
   Controller,
   Post,
@@ -7,16 +6,35 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { JwtAuthGuard, RequestWithUser } from '../auth/guards/jwt-auth.guard'; // Adjust the path as necessary
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiBody,
+} from '@nestjs/swagger';
+import { JwtAuthGuard, RequestWithUser } from '../auth/guards/jwt-auth.guard';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CommentResponseDto } from './dto/comment-response.dto';
 
+@ApiTags('articles')
 @Controller('articles')
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
   @Post(':slug/comments')
+  @ApiOperation({ summary: 'Post comment on slug' })
+  @ApiBody({
+    description: 'required comment with body',
+    type: CreateCommentDto,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully create comment!',
+    type: CommentResponseDto,
+  })
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   async addComment(
     @Param('slug') slug: string,
