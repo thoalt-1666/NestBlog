@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Comment } from './comment.entity';
@@ -13,37 +13,44 @@ export class CommentsService {
     private readonly commentRepository: Repository<Comment>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+  ) { }
 
-  async createComment(slugString: string, createCommentDto: CreateCommentDto, userId: number) : Promise<CommentResponseDto> {
-    const user = await this.userRepository.findOneBy({ id: userId });
-    if (!user) {
-      throw new Error('User not found');
-    }
-    
-    const userResponse = new AuthorDto({
+  async createComment(commentSlug: string, createCommentDto: CreateCommentDto, userId: number): Promise<CommentResponseDto> {
+    try {
+      const user = await this.userRepository.findOneBy({ id: userId });
+      if (!user) { throw new NotFoundException('User not found'); }
+
+      const userResponse = new AuthorDto({
         username: user.username,
         bio: user.bio,
         image: user.image,
         following: false,
       });
-    
-      const newComment = await this.commentRepository.create({
-        slug: slugString,
+
+      const newComment = this.commentRepository.create({
+        slug: commentSlug,
         body: createCommentDto.comment.body,
         authorId: user.id,
       });
-      
-    await this.commentRepository.save(newComment);
-    
-    const commentContext = new CommentContextDto({
-      id: newComment.id,
-      createdAt: newComment.createdAt.toISOString(),  
-      updatedAt: newComment.updatedAt.toISOString(),
-      body: newComment.body,
-      author: userResponse,
-    });
 
-    return {comment: commentContext};
+      await this.commentRepository.save(newComment);
+
+      const commentContext = new CommentContextDto({
+        id: newComment.id,
+        createdAt: newComment.createdAt.toISOString(),
+        updatedAt: newComment.updatedAt.toISOString(),
+        body: newComment.body,
+        author: userResponse,
+      });
+
+      const commentResponse = new CommentResponseDto({
+        comment: commentContext,
+      });
+
+      return commentResponse;
+    }
+    catch (err) {
+      throw new NotFoundException('Error creating comment: ' + err.message);
+    }
   }
 }

@@ -1,4 +1,3 @@
-import { Comment } from '../comment.entity';
 export class AuthorDto {
     username: string;
     bio: string;
@@ -6,7 +5,7 @@ export class AuthorDto {
     following: boolean;
     constructor(partial: Partial<AuthorDto>) {
         Object.assign(this, partial);
-      }
+    }
 }
 export class CommentContextDto {
     id: number;
@@ -14,12 +13,15 @@ export class CommentContextDto {
     updatedAt: string;
     body: string;
     author: AuthorDto;
-    
+
     constructor(partial: Partial<CommentContextDto>) {
         Object.assign(this, partial);
-      }
+    }
 }
 export class CommentResponseDto {
     comment: CommentContextDto;
+
+    constructor(partial: Partial<CommentResponseDto>) {
+        Object.assign(this, partial);
+    }
 }
-  

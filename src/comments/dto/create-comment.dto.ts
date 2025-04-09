@@ -1,5 +1,7 @@
+import { IsNotEmpty } from 'class-validator';
 export class CreateCommentDto {
-    comment: {
+  @IsNotEmpty()
+  comment: {
     body: string;
   };
 }

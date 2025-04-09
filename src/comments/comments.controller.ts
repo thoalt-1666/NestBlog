@@ -7,7 +7,7 @@ import { CommentResponseDto } from './dto/comment-response.dto';
 
 @Controller('articles')
 export class CommentsController {
-  constructor(private readonly commentsService: CommentsService) {}
+  constructor(private readonly commentsService: CommentsService) { }
 
   @Post(':slug/comments')
   @UseGuards(JwtAuthGuard)
@@ -17,7 +17,6 @@ export class CommentsController {
     @Request() req: RequestWithUser,
   ): Promise<CommentResponseDto> {
     const userId = req.user.id;
-    
     return this.commentsService.createComment(slug, createCommentDto, userId);
   }
 }
