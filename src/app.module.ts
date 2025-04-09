@@ -12,7 +12,7 @@ import { ArticleModule } from './article/article.module';
     TypeOrmModule.forRoot(databaseConfig),
     UserModule,
     AuthModule,
-    ArticleModule
+    ArticleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
