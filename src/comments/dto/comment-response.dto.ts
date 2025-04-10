@@ -1,0 +1,27 @@
+export class AuthorDto {
+  username: string;
+  bio: string;
+  image: string;
+  following: boolean;
+  constructor(partial: Partial<AuthorDto>) {
+    Object.assign(this, partial);
+  }
+}
+export class CommentContextDto {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  body: string;
+  author: AuthorDto;
+
+  constructor(partial: Partial<CommentContextDto>) {
+    Object.assign(this, partial);
+  }
+}
+export class CommentResponseDto {
+  comment: CommentContextDto;
+
+  constructor(partial: Partial<CommentResponseDto>) {
+    Object.assign(this, partial);
+  }
+}
