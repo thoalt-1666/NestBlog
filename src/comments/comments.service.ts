@@ -8,15 +8,15 @@ import {
   CommentContextDto,
   AuthorDto,
 } from './dto/comment-response.dto';
-import { User } from 'src/user/entities/user.entity';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class CommentsService {
   constructor(
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+
+    private readonly userService: UserService,
   ) {}
 
   async createComment(
@@ -25,7 +25,7 @@ export class CommentsService {
     userId: number,
   ): Promise<CommentResponseDto> {
     try {
-      const user = await this.userRepository.findOneBy({ id: userId });
+      const user = await this.userService.findOne(userId);
 
       const userResponse = new AuthorDto({
         username: user.username,

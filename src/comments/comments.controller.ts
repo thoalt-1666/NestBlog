@@ -1,4 +1,3 @@
-// src/comments/comments.controller.ts
 import {
   Controller,
   Post,
@@ -7,7 +6,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { JwtAuthGuard, RequestWithUser } from '../auth/guards/jwt-auth.guard'; // Adjust the path as necessary
+import { JwtAuthGuard, RequestWithUser } from '../auth/guards/jwt-auth.guard';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CommentResponseDto } from './dto/comment-response.dto';
